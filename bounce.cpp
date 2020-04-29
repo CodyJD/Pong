@@ -87,16 +87,16 @@ void make_gameBoard(char arr[][W]) {
       }
       ///////scoreboard/////////
       if (j == W - 1 && i == 0) {
-        arr[i][j-44] = 's';
-        arr[i][j-43] = 'c';
-        arr[i][j-42] = 'o';
-        arr[i][j-41] = 'r';
-        arr[i][j-40] = 'e';
-        arr[i][j-39] = 'b';
-        arr[i][j-38] = 'o';
-        arr[i][j-37] = 'a';
-        arr[i][j-36] = 'r';
-        arr[i][j-35] = 'd';
+        arr[i][j-44] = 'S';
+        arr[i][j-43] = 'C';
+        arr[i][j-42] = 'O';
+        arr[i][j-41] = 'R';
+        arr[i][j-40] = 'E';
+        arr[i][j-39] = 'B';
+        arr[i][j-38] = 'O';
+        arr[i][j-37] = 'A';
+        arr[i][j-36] = 'R';
+        arr[i][j-35] = 'D';
       }
       if (j == W - 1 && i == 1) {
         //left side score board (Left to right on board top to bottom here)
