@@ -70,25 +70,59 @@ void show_arr(char arr[][W], int H, int W) {
 void make_gameBoard(char arr[][W]) {
   for (int i = 0; i < H; i++) {
     for (int j = 0; j < W; j++) {
+      //fill character for board
       arr[i][j] = '.';
+
+      //border
       if (i == 0 || i == (H-1)) {
-        arr[i][j] = '=';
+          arr[i][j] = '=';
+
       }
+      //the divider left and right of middle
       if (j == 0 || j == (W-1)) {
         arr[i][j] = '|';
       }
-      if (j == (W/2)-1 || j == (W/2)) {
+      if (j == ((W/2)-1) || j == (W/2)) {
         arr[i][j] = '|';
       }
-      if ((j == (W/2)-1 || j == (W/2)) && i == 0) {
-        arr[i][j-2] = '[';
-        arr[i][j-1] = ']';
+      ///////scoreboard/////////
+      if (j == W - 1 && i == 0) {
+        arr[i][j-44] = 's';
+        arr[i][j-43] = 'c';
+        arr[i][j-42] = 'o';
+        arr[i][j-41] = 'r';
+        arr[i][j-40] = 'e';
+        arr[i][j-39] = 'b';
+        arr[i][j-38] = 'o';
+        arr[i][j-37] = 'a';
+        arr[i][j-36] = 'r';
+        arr[i][j-35] = 'd';
+      }
+      if (j == W - 1 && i == 1) {
+        //left side score board (Left to right on board top to bottom here)
+        arr[i][j-50] = '[';
+        arr[i][j-49] = ' ';
+        arr[i][j-48] = ']';
 
-        arr[i][j-5] = '[';
-        arr[i][j-4] = ']';
+        arr[i][j-47] = '[';
+        arr[i][j-46] = ' ';
+        arr[i][j-45] = ']';
 
-        arr[i][j-7] = '[';
-        arr[i][j-6] = ']';
+        arr[i][j-44] = '[';
+        arr[i][j-43] = ' ';
+        arr[i][j-42] = ']';
+        //right side score scor eb oard
+        arr[i][j-37] = '[';
+        arr[i][j-36] = ' ';
+        arr[i][j-35] = ']';
+
+        arr[i][j-34] = '[';
+        arr[i][j-33] = ' ';
+        arr[i][j-32] = ']';
+
+        arr[i][j-31] = '[';
+        arr[i][j-30] = ' ';
+        arr[i][j-29] = ']';
       }
     }
   }
