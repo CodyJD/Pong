@@ -6,7 +6,7 @@
 #include <iostream>
 #include <unistd.h>
 using namespace std;
-const int W = 30;
+const int W = 80;
 const int H = 20;
 
 class Ball {
@@ -23,10 +23,10 @@ void calculateDir(int W, Ball &b) {
 
     if (b.pos[0] >= W - 2) {
         b.vel[0] = -b.vel[0];
-        b.pos[0] = W-1;
+        b.pos[0] = W-2;
     }
     if (b.pos[0] < 0) {
-        b.pos[0] = 0;
+        b.pos[0] = 1;
         b.vel[0] = -b.vel[0];
     }
 }
@@ -35,14 +35,14 @@ void show_arr(char arr[][W], int H, int W) {
     for (int i = 0; i < H; i++) {
         for (int j = 0; j < W; j++) {
             cout << arr[i][j];
-            cout << arr[i][j];
+            // cout << arr[i][j];
         }
         cout << endl;
     }
     cout << endl;
 }
 
-void print_gameBoard(char arr[][W]) {
+void make_gameBoard(char arr[][W]) {
   for (int i = 0; i < H; i++) {
       for (int j = 0; j < W; j++) {
           arr[i][j] = '.';
@@ -59,9 +59,11 @@ int main(void) {
 
     b.vel[0]=2.0;
     do {
-        print_gameBoard(gameBoard);
+        make_gameBoard(gameBoard);
 
-        gameBoard[(int)b.pos[1]][(int)b.pos[0]] = '#';
+        gameBoard[(int)b.pos[1]][(int)b.pos[0]] = '[';
+        gameBoard[(int)b.pos[1]][(int)b.pos[0]+1] = ']';
+
         show_arr(gameBoard,H,W);
         usleep(100000);
         calculateDir(W, b);
