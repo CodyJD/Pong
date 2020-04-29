@@ -39,8 +39,8 @@ void calculateDir(int W, Ball &b) {
   // just bouncing
   if (b.pos[0] >= W - 2) {
     b.vel[0] = -b.vel[0];
-    b.pos[0] = (W-2); //makes the ball bounce away from the right wall
-    b.pos[1] += 3;
+    b.pos[0] = (W-3); //makes the ball bounce away from the right wall
+    // b.pos[1] += 3;
   }
   if (b.pos[0] < 1) {
     b.pos[0] = 1;
@@ -53,7 +53,7 @@ void calculateDir(int W, Ball &b) {
   }
   if (b.pos[1] < 2) {
     b.vel[1] = -b.vel[1];
-    b.pos[1] = -b.pos[1];
+    b.pos[1] = 1;
   }
 }
 
