@@ -14,7 +14,21 @@ class Ball {
         double pos[2];
         double vel[2];
 
-        Ball () { pos[0]=W/2; pos[1]= H/2; vel[0]=vel[1]=0;}
+        Ball () {
+          pos[0]=W/2;
+          pos[1]= H/2;
+          vel[0]= vel[1]=0;
+        }
+};
+
+class Paddle {
+    public:
+      double pos[2];
+
+    Paddle () {
+      pos[0]= W;
+      pos[1]= H/2;
+    }
 };
 
 void calculateDir(int W, Ball &b) {
@@ -35,7 +49,6 @@ void show_arr(char arr[][W], int H, int W) {
     for (int i = 0; i < H; i++) {
         for (int j = 0; j < W; j++) {
             cout << arr[i][j];
-            // cout << arr[i][j];
         }
         cout << endl;
     }
@@ -54,8 +67,7 @@ int main(void) {
     char gameBoard[H][W];
     Ball b;
     bool quit = false;
-    int direction = 0;
-    (void)direction;
+
 
     b.vel[0]=2.0;
     do {
