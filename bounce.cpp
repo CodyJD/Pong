@@ -24,14 +24,22 @@ public:
 class Paddle {
 public:
   double pos[2];
+  char marker[1] = {'#'};
 
-  Paddle () {
-    pos[0]= W;
-    pos[1]= H/2;
+  Paddle (char side) {
+    if (side == 'L') {
+      pos[0]= 1;
+      pos[1]= H/2;
+    }
+    if (side == 'R') {
+      pos[0]= W - 1;
+      pos[1]= H/2;
+    }
   }
 };
 
-void calculateDir(int W, Ball &b) {
+
+void calculateDir(int W, Ball &b, Paddle &leftPaddle) {
   b.pos[0] += b.vel[0];
   b.pos[1] += b.vel[1];
 
@@ -42,10 +50,10 @@ void calculateDir(int W, Ball &b) {
     b.pos[0] = (W-3); //makes the ball bounce away from the right wall
     // b.pos[1] += 3;
   }
-  if (b.pos[0] < 1) {
+  if ((b.pos[0] < 1) || (leftPaddle.pos[0] + 1 == b.pos[0])) {
     b.pos[0] = 1;
     b.vel[0] = -b.vel[0];
-    b.pos[1] -= 8;
+    //b.pos[1] -= 8;
   }
   if (b.pos[1] >= (H-1)) {
     b.vel[1] = -b.vel[1];
@@ -132,18 +140,22 @@ int main(void) {
   char gameBoard[H][W];
   Ball b;
   bool quit = false;
-
+  Paddle leftPaddle('L');
 
   b.vel[0] = 3.0;
   do {
     make_gameBoard(gameBoard);
-
+    //creating ball and drawing in position
     gameBoard[(int)b.pos[1]][(int)b.pos[0]] = '[';
     gameBoard[(int)b.pos[1]][(int)b.pos[0]+1] = ']';
+    //crating paddle and drawing in position
+    gameBoard[(int)leftPaddle.pos[1]][(int)leftPaddle.pos[0]] = leftPaddle.marker[0];
+    gameBoard[(int)leftPaddle.pos[1]+1][(int)leftPaddle.pos[0]] = leftPaddle.marker[0];
+    gameBoard[(int)leftPaddle.pos[1]-1][(int)leftPaddle.pos[0]] = leftPaddle.marker[0];
 
     show_arr(gameBoard,H,W);
     usleep(100000);
-    calculateDir(W, b);
+    calculateDir(W, b, leftPaddle);
 
   } while (!quit);
 
