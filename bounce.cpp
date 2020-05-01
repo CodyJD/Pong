@@ -24,45 +24,87 @@ public:
 class Paddle {
 public:
   double pos[2];
-  char marker[1] = {'#'};
+  char marker[1];
 
   Paddle (char side) {
     if (side == 'L') {
+      marker[0] = ']';
       pos[0]= 1;
       pos[1]= H/2;
     }
     if (side == 'R') {
-      pos[0]= W - 1;
-      pos[1]= H/2;
+      marker[0] = '[';
+      pos[0]= W - 2;
+      pos[1]= H/2 + 1;
     }
   }
 };
 
-
-void calculateDir(int W, Ball &b, Paddle &leftPaddle) {
+ // All positions are based off of the leftmost part of the ball
+void collision(int W, Ball &b, Paddle &rightPaddle) {
   b.pos[0] += b.vel[0];
   b.pos[1] += b.vel[1];
 
   // b.pos[0] will eventually be changed to add to score rather than
-  // just bouncing
-  if (b.pos[0] >= W - 2) {
-    b.vel[0] = -b.vel[0];
-    b.pos[0] = (W-3); //makes the ball bounce away from the right wall
+  // bouncing off right wall
+  if (b.pos[0] >= W - 2) { //w -2= 78 || 78
+    // b.vel[0] = -b.vel[0];
+    // b.pos[0] -= 1; //makes the ball bounce away from the right wall
+    //b.pos[0] = (W-3); //makes the ball bounce away from the right wall
     // b.pos[1] += 3;
+    b.pos[0] = W/2;
+    b.pos[1] = H/2;
+    b.vel[0] = b.vel[1] = 0;
+    //press enter then yeet the ball
   }
-  if ((b.pos[0] < 1) || (leftPaddle.pos[0] + 1 == b.pos[0])) {
-    b.pos[0] = 1;
-    b.vel[0] = -b.vel[0];
+  //bounce off left wall
+  if (b.pos[0] < 1) {
+    // b.pos[0] += 1;
+    // b.vel[0] = -b.vel[0];
     //b.pos[1] -= 8;
+    b.pos[0] = (W/2)-1;
+    b.pos[1] = H/2;
+    b.vel[0] = b.vel[1] = 0;
   }
-  if (b.pos[1] >= (H-1)) {
-    b.vel[1] = -b.vel[1];
-    b.pos[1] = H - 2;
+  // if (b.pos[1] >= (H-1)) {
+  //   b.vel[1] = -b.vel[1];
+  //   b.pos[1] = H - 2;
+  // }
+  // if (b.pos[1] < 2) {
+  //   b.vel[1] = -b.vel[1];
+  //   b.pos[1] += 1;
+  // }
+////////paddle collission////////
+
+  // collision with right paddle
+  // middle of right paddle
+  if ((b.pos[0] >= rightPaddle.pos[0] - 1) && (rightPaddle.pos[1] == b.pos[1])) {
+    b.vel[0] = -b.vel[0];
+    b.pos[0] -= 1;
   }
-  if (b.pos[1] < 2) {
-    b.vel[1] = -b.vel[1];
-    b.pos[1] = 1;
+  //top of paddle
+  if ((b.pos[0] >= rightPaddle.pos[0] - 1) && ((rightPaddle.pos[1] - 1) == b.pos[1])) {
+    b.vel[1] = 1;
+    b.pos[0] -= 1;
+    b.pos[1] -= 1;
+    b.vel[0] = -b.vel[0];
+    b.vel[1] += -b.vel[1];
   }
+  // if (goingLeft == true) {
+  //   if (b.vel[1] != 0) {
+  //
+  //
+  //   }
+  // }
+
+
+  //collision with left paddle
+  // if ((b.pos[0] >= leftPaddle.pos[0] - 1) && (leftPaddle.pos[1] == b.pos[1])) {
+  //   b.vel[0] = -b.vel[0];
+  //   b.pos[0] -= 1;
+  // }
+
+
 }
 
 void show_arr(char arr[][W], int H, int W) {
@@ -84,7 +126,6 @@ void make_gameBoard(char arr[][W]) {
       //border
       if (i == 0 || i == (H-1)) {
           arr[i][j] = '=';
-
       }
       //the divider left and right of middle
       if (j == 0 || j == (W-1)) {
@@ -119,7 +160,7 @@ void make_gameBoard(char arr[][W]) {
         arr[i][j-44] = '[';
         arr[i][j-43] = ' ';
         arr[i][j-42] = ']';
-        //right side score scor eb oard
+        //right side score scor|eb|oard
         arr[i][j-37] = '[';
         arr[i][j-36] = ' ';
         arr[i][j-35] = ']';
@@ -140,22 +181,22 @@ int main(void) {
   char gameBoard[H][W];
   Ball b;
   bool quit = false;
-  Paddle leftPaddle('L');
+  Paddle rightPaddle('R');
 
-  b.vel[0] = 3.0;
+  b.vel[0] = 1.0;
   do {
     make_gameBoard(gameBoard);
     //creating ball and drawing in position
     gameBoard[(int)b.pos[1]][(int)b.pos[0]] = '[';
     gameBoard[(int)b.pos[1]][(int)b.pos[0]+1] = ']';
     //crating paddle and drawing in position
-    gameBoard[(int)leftPaddle.pos[1]][(int)leftPaddle.pos[0]] = leftPaddle.marker[0];
-    gameBoard[(int)leftPaddle.pos[1]+1][(int)leftPaddle.pos[0]] = leftPaddle.marker[0];
-    gameBoard[(int)leftPaddle.pos[1]-1][(int)leftPaddle.pos[0]] = leftPaddle.marker[0];
+    gameBoard[(int)rightPaddle.pos[1]][(int)rightPaddle.pos[0]] = rightPaddle.marker[0];
+    gameBoard[(int)rightPaddle.pos[1]+1][(int)rightPaddle.pos[0]] = rightPaddle.marker[0];
+    gameBoard[(int)rightPaddle.pos[1]-1][(int)rightPaddle.pos[0]] = rightPaddle.marker[0];
 
     show_arr(gameBoard,H,W);
     usleep(100000);
-    calculateDir(W, b, leftPaddle);
+    collision(W, b, rightPaddle);
 
   } while (!quit);
 
