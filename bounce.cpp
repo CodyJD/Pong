@@ -59,6 +59,35 @@ void rightPaddleMovement(Paddle &rightPaddle, char &move) {
 
 }
 
+// bool rightScore(false), leftScore(false);
+// int rightCount(0), leftCount(0);
+// void scoreSystem (bool rightScore, bool leftScore, &gameBoard, int H, int W) {
+//   if (rightScore == true) {
+//     rightCount++;
+//     if (rightCount == 1) {
+//       // adjust scoreboard
+//
+//     } else if (rightCount == 2) {
+//
+//     } else if (rightCount == 3) {
+//
+//     }
+//     rightScore = false;
+//   }
+//   if (leftScore == true) {
+//     leftCount++;
+//     if (leftCount == 1) {
+//       //adjust scoreboard
+//     } else if (leftCount == 2) {
+//       //adjust scoreboard
+//     } else if(leftCount == 3) {
+//       //adjust scoreboard
+//
+//     }
+//     leftScore = false;
+//   }
+// }
+
 // All positions are based off of the leftmost part of the ball
 void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
   b.pos[0] += b.vel[0];
@@ -71,6 +100,7 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
     b.pos[0] = (W/2) -1;
     b.pos[1] = H/2;
     b.vel[0] = b.vel[1] = 0;
+    // leftScore = true;
     //press enter then yeet the ball
   }
   //collides left wall
@@ -270,6 +300,8 @@ int main(void) {
     show_arr(gameBoard,H,W);
     usleep(100000);
     collision(W, b, rightPaddle, leftPaddle);
+    /////////////////////
+    //scoreSystem(rightScore, leftScore, gameBoard, H, W);
 
   } while (!quit);
   // } while (!quit || !bitch());
