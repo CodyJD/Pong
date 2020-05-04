@@ -3,6 +3,14 @@
 //that will be converted to local online using Client
 //Server lab and the concepts of creating a game we have
 //learned from CMPS 4490.
+
+//TODO LIST
+// Impelment score system
+// complete kbhit with keyboard inputs
+// start converting to online gameplay
+
+
+
 #include <iostream>
 #include <unistd.h>
 #include <stdio.h>
