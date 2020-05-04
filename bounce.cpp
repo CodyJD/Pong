@@ -30,12 +30,12 @@ public:
     if (side == 'L') {
       marker[0] = ']';
       pos[0]= 1;
-      pos[1]= H/2;
+      pos[1]= H/2 - 1;
     }
     if (side == 'R') {
       marker[0] = '[';
       pos[0]= W - 2;
-      pos[1]= H/2 - 1;
+      pos[1]= H/2;
     }
   }
 };
@@ -79,34 +79,54 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
 ////////paddle collission////////
 
   // collision with right paddle
-  // middle of left paddle
+
+  // middle of right paddle
   if ((b.pos[0] >= rightPaddle.pos[0] - 1) && (rightPaddle.pos[1] == b.pos[1])) {
     b.vel[0] = -b.vel[0];
     b.pos[0] -= 1;
+    b.vel[1] = 0;
   }
-  //top of left paddle
+  //top of right paddle
   if ((b.pos[0] >= rightPaddle.pos[0] - 1) && ((rightPaddle.pos[1] - 1) == b.pos[1])) {
+    b.vel[0] = -b.vel[0];
     b.pos[0] -= 1;
     b.vel[0] = 2;
-    b.vel[0] = -b.vel[0];
     b.pos[1] -= 1;
     b.vel[1] = 1;
     b.vel[1] = -b.vel[1];
   }
-  //bottom of left Paddle
-  if ((b.pos[0] >= rightPaddle.pos[0] - 1) && ((rightPaddle.pos[1] + 1) == b.pos[1])) {
+  //bottom of right Paddle
+  if ((b.pos[0] >= rightPaddle.pos[0] - 1) && ((rightPaddle.pos[1] + 1) >= b.pos[1])) {
+    b.vel[0] = -b.vel[0];
     b.pos[0] -= 1;
     b.vel[0] = 2;
-    b.vel[0] = -b.vel[0];
     b.pos[1] += 1;
     b.vel[1] = 1;
   }
-  //collision with left paddle
-  if ((b.pos[0] >= leftPaddle.pos[0] + 1) && (leftPaddle.pos[1] == b.pos[1])) {
+////////////////////////////////////////////////////////////////////////////////////////
+  //collision with left paddle middle
+  if ((b.pos[0] <= leftPaddle.pos[0]) && (leftPaddle.pos[1] == b.pos[1])) {
     b.vel[0] = -b.vel[0];
-    b.pos[0] -= 1;
+    b.pos[0] += 1;
+    b.vel[1] = 0;
   }
-
+  // top of left paddle colision
+  if ((b.pos[0] <= leftPaddle.pos[0]) && ((leftPaddle.pos[1] - 1) == b.pos[1])) {
+    b.vel[0] = -b.vel[0];
+    b.pos[0] += 1;
+    b.vel[0] = 2;
+    b.pos[1] -= 1;
+    b.vel[1] = 1;
+    b.vel[1] = -b.vel[1];
+  }
+  // bottom of left paddle colision
+  if ((b.pos[0] <= leftPaddle.pos[0]) && ((leftPaddle.pos[1] + 1) == b.pos[1])) {
+    b.vel[0] = -b.vel[0];
+    b.pos[0] += 1;
+    b.vel[0] = 2;
+    b.pos[1] += 1;
+    b.vel[1] = 1;
+  }
 
 }
 
@@ -186,8 +206,10 @@ int main(void) {
   bool quit = false;
   Paddle rightPaddle('R'), leftPaddle('L');
 
-  b.vel[0] = -1.0;
+  b.vel[0] = 1.0;
   do {
+    cout << "b.pos[0]: " << b.pos[0] << "   " << "b.vel[0]: " << b.vel[0] << endl;
+    cout << "b.pos[1]: " << b.pos[1] << "   " << "b.vel[1]: " << b.vel[1] << endl;
     make_gameBoard(gameBoard);
     //creating ball and drawing in position
     gameBoard[(int)b.pos[1]][(int)b.pos[0]] = '[';
