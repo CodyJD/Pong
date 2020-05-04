@@ -35,13 +35,13 @@ public:
     if (side == 'R') {
       marker[0] = '[';
       pos[0]= W - 2;
-      pos[1]= H/2 + 1;
+      pos[1]= H/2 - 1;
     }
   }
 };
 
  // All positions are based off of the leftmost part of the ball
-void collision(int W, Ball &b, Paddle &rightPaddle) {
+void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
   b.pos[0] += b.vel[0];
   b.pos[1] += b.vel[1];
 
@@ -66,43 +66,46 @@ void collision(int W, Ball &b, Paddle &rightPaddle) {
     b.pos[1] = H/2;
     b.vel[0] = b.vel[1] = 0;
   }
-  // if (b.pos[1] >= (H-1)) {
-  //   b.vel[1] = -b.vel[1];
-  //   b.pos[1] = H - 2;
-  // }
-  // if (b.pos[1] < 2) {
-  //   b.vel[1] = -b.vel[1];
-  //   b.pos[1] += 1;
-  // }
+  //top board colission
+  if (b.pos[1] < 1) {
+    b.vel[1] = -b.vel[1];
+    b.pos[1] += 1;
+  }
+  //bottom board collision
+  if (b.pos[1] >= (H-1)) {
+    b.vel[1] = -b.vel[1];
+    b.pos[1] = H - 2;
+  }
 ////////paddle collission////////
 
   // collision with right paddle
-  // middle of right paddle
+  // middle of left paddle
   if ((b.pos[0] >= rightPaddle.pos[0] - 1) && (rightPaddle.pos[1] == b.pos[1])) {
     b.vel[0] = -b.vel[0];
     b.pos[0] -= 1;
   }
-  //top of paddle
+  //top of left paddle
   if ((b.pos[0] >= rightPaddle.pos[0] - 1) && ((rightPaddle.pos[1] - 1) == b.pos[1])) {
-    b.vel[1] = 1;
     b.pos[0] -= 1;
-    b.pos[1] -= 1;
+    b.vel[0] = 2;
     b.vel[0] = -b.vel[0];
-    b.vel[1] += -b.vel[1];
+    b.pos[1] -= 1;
+    b.vel[1] = 1;
+    b.vel[1] = -b.vel[1];
   }
-  // if (goingLeft == true) {
-  //   if (b.vel[1] != 0) {
-  //
-  //
-  //   }
-  // }
-
-
+  //bottom of left Paddle
+  if ((b.pos[0] >= rightPaddle.pos[0] - 1) && ((rightPaddle.pos[1] + 1) == b.pos[1])) {
+    b.pos[0] -= 1;
+    b.vel[0] = 2;
+    b.vel[0] = -b.vel[0];
+    b.pos[1] += 1;
+    b.vel[1] = 1;
+  }
   //collision with left paddle
-  // if ((b.pos[0] >= leftPaddle.pos[0] - 1) && (leftPaddle.pos[1] == b.pos[1])) {
-  //   b.vel[0] = -b.vel[0];
-  //   b.pos[0] -= 1;
-  // }
+  if ((b.pos[0] >= leftPaddle.pos[0] + 1) && (leftPaddle.pos[1] == b.pos[1])) {
+    b.vel[0] = -b.vel[0];
+    b.pos[0] -= 1;
+  }
 
 
 }
@@ -181,9 +184,9 @@ int main(void) {
   char gameBoard[H][W];
   Ball b;
   bool quit = false;
-  Paddle rightPaddle('R');
+  Paddle rightPaddle('R'), leftPaddle('L');
 
-  b.vel[0] = 1.0;
+  b.vel[0] = -1.0;
   do {
     make_gameBoard(gameBoard);
     //creating ball and drawing in position
@@ -194,9 +197,13 @@ int main(void) {
     gameBoard[(int)rightPaddle.pos[1]+1][(int)rightPaddle.pos[0]] = rightPaddle.marker[0];
     gameBoard[(int)rightPaddle.pos[1]-1][(int)rightPaddle.pos[0]] = rightPaddle.marker[0];
 
+    gameBoard[(int)leftPaddle.pos[1]][(int)leftPaddle.pos[0]] = leftPaddle.marker[0];
+    gameBoard[(int)leftPaddle.pos[1]+1][(int)leftPaddle.pos[0]] = leftPaddle.marker[0];
+    gameBoard[(int)leftPaddle.pos[1]-1][(int)leftPaddle.pos[0]] = leftPaddle.marker[0];
+
     show_arr(gameBoard,H,W);
     usleep(100000);
-    collision(W, b, rightPaddle);
+    collision(W, b, rightPaddle, leftPaddle);
 
   } while (!quit);
 
