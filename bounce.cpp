@@ -5,6 +5,9 @@
 //learned from CMPS 4490.
 #include <iostream>
 #include <unistd.h>
+#include <stdio.h>
+#include <termios.h>
+
 using namespace std;
 const int W = 80;
 const int H = 20;
@@ -40,7 +43,15 @@ public:
   }
 };
 
- // All positions are based off of the leftmost part of the ball
+void rightPaddleMovement(Paddle &rightPaddle, char &move) {
+  move = getchar();
+  if(move == 105) {
+    rightPaddle.pos[0] += 1;
+  }
+
+}
+
+// All positions are based off of the leftmost part of the ball
 void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
   b.pos[0] += b.vel[0];
   b.pos[1] += b.vel[1];
@@ -90,7 +101,7 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
     b.pos[0] -= 2;
     b.vel[1] = 0;
   }
-  
+
   //bottom of right Paddle
   if ((b.pos[0] >= rightPaddle.pos[0] - 1) && ((rightPaddle.pos[1] + 1) >= b.pos[1])) {
     b.vel[0] = -b.vel[0];
@@ -124,7 +135,6 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
     b.pos[1] += 1;
     b.vel[1] = 1;
   }
-
 }
 
 void show_arr(char arr[][W], int H, int W) {
@@ -197,11 +207,38 @@ void make_gameBoard(char arr[][W]) {
   }
 }
 
+// void bitch() {
+//   struct termios oldt, newt;
+//   int ch;
+//   int oldf;
+//
+//   tcgetattr(STDIN_FILENO, &oldt);
+//   newt = oldt;
+//   newt.c_lflag &= ~(ICANON | ECHO);
+//   tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+//   oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+//   fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+//
+//   ch = getchar();
+//
+//   tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+//   fcntl(STDIN_FILENO, F_SETFL, oldf);
+//
+//   if(ch != EOF)
+//   {
+//       //ungetc(ch, stdin);
+//       return 1;
+//   }
+//
+//   return 0;
+// }
+
 int main(void) {
   char gameBoard[H][W];
   Ball b;
   bool quit = false;
   Paddle rightPaddle('R'), leftPaddle('L');
+  char move;
 
   b.vel[0] = 1.0;
   do {
@@ -211,6 +248,8 @@ int main(void) {
     //creating ball and drawing in position
     gameBoard[(int)b.pos[1]][(int)b.pos[0]] = '[';
     gameBoard[(int)b.pos[1]][(int)b.pos[0]+1] = ']';
+
+    //rightPaddleMovement(rightPaddle, move);
     //crating paddle and drawing in position
     gameBoard[(int)rightPaddle.pos[1]][(int)rightPaddle.pos[0]] = rightPaddle.marker[0];
     gameBoard[(int)rightPaddle.pos[1]+1][(int)rightPaddle.pos[0]] = rightPaddle.marker[0];
@@ -225,6 +264,7 @@ int main(void) {
     collision(W, b, rightPaddle, leftPaddle);
 
   } while (!quit);
+  // } while (!quit || !bitch());
 
   return 0;
 }
