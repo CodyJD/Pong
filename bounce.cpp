@@ -30,7 +30,7 @@ public:
     if (side == 'L') {
       marker[0] = ']';
       pos[0]= 1;
-      pos[1]= H/2 - 1;
+      pos[1]= H/2;
     }
     if (side == 'R') {
       marker[0] = '[';
@@ -46,22 +46,16 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
   b.pos[1] += b.vel[1];
 
   // b.pos[0] will eventually be changed to add to score rather than
-  // bouncing off right wall
-  if (b.pos[0] >= W - 2) { //w -2= 78 || 78
-    // b.vel[0] = -b.vel[0];
-    // b.pos[0] -= 1; //makes the ball bounce away from the right wall
-    //b.pos[0] = (W-3); //makes the ball bounce away from the right wall
-    // b.pos[1] += 3;
-    b.pos[0] = W/2;
+
+  // collides right wall
+  if (b.pos[0] >= W - 2) {
+    b.pos[0] = (W/2) -1;
     b.pos[1] = H/2;
     b.vel[0] = b.vel[1] = 0;
     //press enter then yeet the ball
   }
-  //bounce off left wall
+  //collides left wall
   if (b.pos[0] < 1) {
-    // b.pos[0] += 1;
-    // b.vel[0] = -b.vel[0];
-    //b.pos[1] -= 8;
     b.pos[0] = (W/2)-1;
     b.pos[1] = H/2;
     b.vel[0] = b.vel[1] = 0;
@@ -80,49 +74,52 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
 
   // collision with right paddle
 
-  // middle of right paddle
-  if ((b.pos[0] >= rightPaddle.pos[0] - 1) && (rightPaddle.pos[1] == b.pos[1])) {
-    b.vel[0] = -b.vel[0];
-    b.pos[0] -= 1;
-    b.vel[1] = 0;
-  }
   //top of right paddle
   if ((b.pos[0] >= rightPaddle.pos[0] - 1) && ((rightPaddle.pos[1] - 1) == b.pos[1])) {
     b.vel[0] = -b.vel[0];
-    b.pos[0] -= 1;
+    b.pos[0] -= 2;
     b.vel[0] = 2;
     b.pos[1] -= 1;
     b.vel[1] = 1;
     b.vel[1] = -b.vel[1];
   }
+
+  // middle of right paddle
+  if ((b.pos[0] >= rightPaddle.pos[0] - 1) && (rightPaddle.pos[1] == b.pos[1])) {
+    b.vel[0] = -b.vel[0];
+    b.pos[0] -= 2;
+    b.vel[1] = 0;
+  }
+  
   //bottom of right Paddle
   if ((b.pos[0] >= rightPaddle.pos[0] - 1) && ((rightPaddle.pos[1] + 1) >= b.pos[1])) {
     b.vel[0] = -b.vel[0];
-    b.pos[0] -= 1;
+    b.pos[0] -= 2;
     b.vel[0] = 2;
     b.pos[1] += 1;
     b.vel[1] = 1;
   }
 ////////////////////////////////////////////////////////////////////////////////////////
   //collision with left paddle middle
-  if ((b.pos[0] <= leftPaddle.pos[0]) && (leftPaddle.pos[1] == b.pos[1])) {
-    b.vel[0] = -b.vel[0];
-    b.pos[0] += 1;
-    b.vel[1] = 0;
-  }
   // top of left paddle colision
   if ((b.pos[0] <= leftPaddle.pos[0]) && ((leftPaddle.pos[1] - 1) == b.pos[1])) {
     b.vel[0] = -b.vel[0];
-    b.pos[0] += 1;
+    b.pos[0] += 2;
     b.vel[0] = 2;
     b.pos[1] -= 1;
     b.vel[1] = 1;
     b.vel[1] = -b.vel[1];
   }
-  // bottom of left paddle colision
+  // middle of left paddle colission
+  if ((b.pos[0] <= leftPaddle.pos[0]) && (leftPaddle.pos[1] == b.pos[1])) {
+    b.vel[0] = -b.vel[0];
+    b.pos[0] += 2;
+    b.vel[1] = 0;
+  }
+  // bottom of left paddle colission
   if ((b.pos[0] <= leftPaddle.pos[0]) && ((leftPaddle.pos[1] + 1) == b.pos[1])) {
     b.vel[0] = -b.vel[0];
-    b.pos[0] += 1;
+    b.pos[0] += 2;
     b.vel[0] = 2;
     b.pos[1] += 1;
     b.vel[1] = 1;
@@ -144,7 +141,7 @@ void make_gameBoard(char arr[][W]) {
   for (int i = 0; i < H; i++) {
     for (int j = 0; j < W; j++) {
       //fill character for board
-      arr[i][j] = '.';
+      arr[i][j] = ' ';
 
       //border
       if (i == 0 || i == (H-1)) {
