@@ -20,6 +20,9 @@ using namespace std;
 const int W = 80;
 const int H = 20;
 
+int rightCount(0), leftCount(0);
+bool rightScore(false), leftScore(false);
+
 class Ball {
 public:
   double pos[2];
@@ -46,7 +49,7 @@ public:
     if (side == 'R') {
       marker[0] = '[';
       pos[0]= W - 2;
-      pos[1]= H/2;
+      pos[1]= H/2+2;
     }
   }
 };
@@ -58,35 +61,6 @@ void rightPaddleMovement(Paddle &rightPaddle, char &move) {
   }
 
 }
-
-// bool rightScore(false), leftScore(false);
-// int rightCount(0), leftCount(0);
-// void scoreSystem (bool rightScore, bool leftScore, &gameBoard, int H, int W) {
-//   if (rightScore == true) {
-//     rightCount++;
-//     if (rightCount == 1) {
-//       // adjust scoreboard
-//
-//     } else if (rightCount == 2) {
-//
-//     } else if (rightCount == 3) {
-//
-//     }
-//     rightScore = false;
-//   }
-//   if (leftScore == true) {
-//     leftCount++;
-//     if (leftCount == 1) {
-//       //adjust scoreboard
-//     } else if (leftCount == 2) {
-//       //adjust scoreboard
-//     } else if(leftCount == 3) {
-//       //adjust scoreboard
-//
-//     }
-//     leftScore = false;
-//   }
-// }
 
 // All positions are based off of the leftmost part of the ball
 void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
@@ -100,7 +74,6 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
     b.pos[0] = (W/2) -1;
     b.pos[1] = H/2;
     b.vel[0] = b.vel[1] = 0;
-    // leftScore = true;
     //press enter then yeet the ball
   }
   //collides left wall
@@ -108,6 +81,9 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
     b.pos[0] = (W/2)-1;
     b.pos[1] = H/2;
     b.vel[0] = b.vel[1] = 0;
+    // score implementation
+    rightScore = true;
+    rightCount++;
   }
   //top board colission
   if (b.pos[1] < 1) {
@@ -287,6 +263,7 @@ int main(void) {
     gameBoard[(int)b.pos[1]][(int)b.pos[0]] = '[';
     gameBoard[(int)b.pos[1]][(int)b.pos[0]+1] = ']';
 
+
     //rightPaddleMovement(rightPaddle, move);
     //crating paddle and drawing in position
     gameBoard[(int)rightPaddle.pos[1]][(int)rightPaddle.pos[0]] = rightPaddle.marker[0];
@@ -297,11 +274,46 @@ int main(void) {
     gameBoard[(int)leftPaddle.pos[1]+1][(int)leftPaddle.pos[0]] = leftPaddle.marker[0];
     gameBoard[(int)leftPaddle.pos[1]-1][(int)leftPaddle.pos[0]] = leftPaddle.marker[0];
 
+    collision(W, b, rightPaddle, leftPaddle);
+    /////////score system//////////
+    //rightside
+    // int rightScored(0);
+    // gameBoard[1][30] = 'x';
+    // gameBoard[1][33] = 'x';
+    // gameBoard[1][36] = 'x';
+    if (rightScore) {
+      rightScore = false;
+      if (rightCount == 1)
+        gameBoard[1][49] = 'x';
+      if (rightCount == 2)
+        gameBoard[1][46] = 'x';
+      if (rightCount == 3)
+        gameBoard[1][43] = 'x';
+
+      if (rightCount == 3) {
+        // Avengers endgame screen
+        quit = false;
+      }
+    }
+
+    //leftside
+    if (leftScore) {
+      leftScore = false;
+      if (leftCount == 1)
+        gameBoard[1][30] = 'x';
+      if (leftCount == 2)
+        gameBoard[1][33] = 'x';
+      if (leftCount == 3)
+        gameBoard[1][36] = 'x';
+
+      if (leftCount == 3) {
+        // Avengers endgame screen
+        quit = false;
+      }
+    }
+
     show_arr(gameBoard,H,W);
     usleep(100000);
-    collision(W, b, rightPaddle, leftPaddle);
-    /////////////////////
-    //scoreSystem(rightScore, leftScore, gameBoard, H, W);
 
   } while (!quit);
   // } while (!quit || !bitch());
