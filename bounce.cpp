@@ -6,9 +6,9 @@
 
 //TODO LIST
 // [x] fix broken collision system
-// Impelment score system
-// complete kbhit with keyboard inputs
-// start converting to online gameplay
+// [] Impelment score system
+// [] complete kbhit with keyboard inputs
+// [] start converting to online gameplay
 
 
 
