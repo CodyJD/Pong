@@ -17,6 +17,7 @@ const int W = 80;
 const int H = 20;
 int rightCount(0), leftCount(0);
 bool rightScore(false), leftScore(false);
+bool quit = false;
 
 class Ball {
 public:
@@ -44,7 +45,7 @@ public:
     if (side == 'R') {
       marker[0] = '[';
       pos[0]= W - 2;
-      pos[1]= H/2;
+      pos[1]= H/2+6;
     }
   }
 };
@@ -68,7 +69,11 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
   if ((b.pos[0] >= W - 2)) {
     b.pos[0] = (W/2) -1;
     b.pos[1] = H/2;
-    b.vel[0] = b.vel[1] = 0;
+    // b.vel[0] = b.vel[1] = 0; //change this to test score system
+    // score implementation
+    leftScore = true;
+    leftCount++;
+
     //press enter then yeet the ball
   }
   //collides left wall
@@ -76,7 +81,7 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
   if (b.pos[0] < 1) {
     b.pos[0] = (W/2)-1;
     b.pos[1] = H/2;
-    b.vel[0] = b.vel[1] = 0;
+    // b.vel[0] = b.vel[1] = 0; //change this to test score system
     // score implementation
     rightScore = true;
     rightCount++;
@@ -170,7 +175,6 @@ void make_gameBoard(char arr[][W]) {
       if (j == W - 1 && i == 1) {
         //left side score board (Left to right on board top to bottom here)
         arr[i][j-50] = '[';
-        // if (!notscore)
         arr[i][j-49] = ' ';
         arr[i][j-48] = ']';
 
@@ -181,6 +185,23 @@ void make_gameBoard(char arr[][W]) {
         arr[i][j-44] = '[';
         arr[i][j-43] = ' ';
         arr[i][j-42] = ']';
+
+        //score system logic
+        if (leftCount == 1){
+          arr[i][j-49] = 'x';
+          leftScore = false;
+        } else if(leftCount == 2){
+          arr[i][j-49] = 'x';
+          arr[i][j-46] = 'x';
+          leftScore = false;
+        } else if (leftCount == 3) {
+          arr[i][j-49] = 'x';
+          arr[i][j-46] = 'x';
+          arr[i][j-43] = 'x';
+          leftScore = false;
+          quit = true;
+        }
+
         //right side score scor|eb|oard
         arr[i][j-37] = '[';
         arr[i][j-36] = ' ';
@@ -193,6 +214,22 @@ void make_gameBoard(char arr[][W]) {
         arr[i][j-31] = '[';
         arr[i][j-30] = ' ';
         arr[i][j-29] = ']';
+
+        //score system logic
+        if (rightCount == 1) {
+          arr[i][j-30] = 'x';
+          rightScore = false;
+        } else if (rightCount == 2) {
+          arr[i][j-30] = 'x';
+          arr[i][j-33] = 'x';
+          rightScore = false;
+        } else if (rightCount == 3) {
+          arr[i][j-30] = 'x';
+          arr[i][j-33] = 'x';
+          arr[i][j-36] = 'x';
+          rightScore = false;
+          quit = true;
+        }
       }
     }
   }
@@ -227,11 +264,10 @@ void make_gameBoard(char arr[][W]) {
 int main(void) {
   char gameBoard[H][W];
   Ball b;
-  bool quit = false;
   Paddle rightPaddle('R'), leftPaddle('L');
   char move;
-  b.vel[0] = -1.0;
 
+  b.vel[0] = -1.0;
 
   do {
     cout << "b.pos[0]: " << b.pos[0] << "   " << "b.vel[0]: " << b.vel[0] << endl;
@@ -252,43 +288,6 @@ int main(void) {
     gameBoard[(int)leftPaddle.pos[1]-1][(int)leftPaddle.pos[0]] = leftPaddle.marker[0];
 
     collision(W, b, rightPaddle, leftPaddle);
-    /////////score system//////////
-    //rightside
-    // int rightScored(0);
-    // gameBoard[1][30] = 'x';
-    // gameBoard[1][33] = 'x';
-    // gameBoard[1][36] = 'x';
-    if (rightScore) {
-      rightScore = false;
-      if (rightCount == 1)
-        gameBoard[1][49] = 'x';
-      if (rightCount == 2)
-        gameBoard[1][46] = 'x';
-      if (rightCount == 3)
-        gameBoard[1][43] = 'x';
-
-      if (rightCount == 3) {
-        // Avengers endgame screen
-        quit = false;
-      }
-    }
-
-    //leftside
-    if (leftScore) {
-      leftScore = false;
-      if (leftCount == 1)
-        gameBoard[1][30] = 'x';
-      if (leftCount == 2)
-        gameBoard[1][33] = 'x';
-      if (leftCount == 3)
-        gameBoard[1][36] = 'x';
-
-      if (leftCount == 3) {
-        // Avengers endgame screen
-        quit = false;
-      }
-    }
-
     show_arr(gameBoard,H,W);
     usleep(100000);
 
