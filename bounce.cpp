@@ -5,14 +5,17 @@
 //learned from CMPS 4490.
 
 //TODO LIST
-// Impelment score system
-// complete kbhit with keyboard inputs
-// start converting to online gameplay
+// [x] fixed crazy collision maddness
+// [x] Impelment score system
+// [] complete kbhit with keyboard inputs
+// [] start converting to online gameplay
 #include <iostream>
 #include <unistd.h>
 #include <stdio.h>
 #include <termios.h>
+
 using namespace std;
+
 const int W = 80;
 const int H = 20;
 int rightCount(0), leftCount(0);
