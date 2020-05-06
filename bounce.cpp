@@ -45,7 +45,7 @@ public:
     if (side == 'R') {
       marker[0] = '[';
       pos[0]= W - 2;
-      pos[1]= H/2+6;
+      pos[1]= H/2+1;
     }
   }
 };
@@ -293,6 +293,15 @@ int main(void) {
 
   } while (!quit);
   // } while (!quit || !bitch());
+
+  cout << "Game Over." << endl;
+  // in multiplayer we can put the names of the inputted
+  // player name
+  if (leftCount == 3) {
+    cout << "Left Player Wins!" << endl;
+  }
+  else
+    cout << "Right Player Wins!" << endl;
 
   return 0;
 }
