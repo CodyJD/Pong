@@ -44,7 +44,7 @@ public:
     if (side == 'R') {
       marker[0] = '[';
       pos[0]= W - 2;
-      pos[1]= H/2 + -1;
+      pos[1]= H/2;
     }
   }
 };
@@ -73,8 +73,7 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
   }
   //collides left wall
   //if statements are for making sure hits the left wall and doesnt also hit paddle
-  if (b.pos[0] < 1 && ((rightPaddle.pos[1] - 1) != b.pos[1]) &&\
-    ((rightPaddle.pos[1]) != b.pos[1]) && ((rightPaddle.pos[1] + 1) != b.pos[1])) {
+  if (b.pos[0] < 1) {
     b.pos[0] = (W/2)-1;
     b.pos[1] = H/2;
     b.vel[0] = b.vel[1] = 0;
@@ -231,8 +230,8 @@ int main(void) {
   bool quit = false;
   Paddle rightPaddle('R'), leftPaddle('L');
   char move;
-
   b.vel[0] = -1.0;
+
 
   do {
     cout << "b.pos[0]: " << b.pos[0] << "   " << "b.vel[0]: " << b.vel[0] << endl;
@@ -241,7 +240,6 @@ int main(void) {
     //creating ball and drawing in position
     gameBoard[(int)b.pos[1]][(int)b.pos[0]] = '[';
     gameBoard[(int)b.pos[1]][(int)b.pos[0]+1] = ']';
-
 
     //rightPaddleMovement(rightPaddle, move);
     //crating paddle and drawing in position
