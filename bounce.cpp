@@ -5,22 +5,16 @@
 //learned from CMPS 4490.
 
 //TODO LIST
-// [x] fix broken collision system
-// [] Impelment score system
-// [] complete kbhit with keyboard inputs
-// [] start converting to online gameplay
-
-
-
+// Impelment score system
+// complete kbhit with keyboard inputs
+// start converting to online gameplay
 #include <iostream>
 #include <unistd.h>
 #include <stdio.h>
 #include <termios.h>
-
 using namespace std;
 const int W = 80;
 const int H = 20;
-
 int rightCount(0), leftCount(0);
 bool rightScore(false), leftScore(false);
 
@@ -50,7 +44,7 @@ public:
     if (side == 'R') {
       marker[0] = '[';
       pos[0]= W - 2;
-      pos[1]= H/2+2;
+      pos[1]= H/2 + -1;
     }
   }
 };
@@ -67,18 +61,20 @@ void rightPaddleMovement(Paddle &rightPaddle, char &move) {
 void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
   b.pos[0] += b.vel[0];
   b.pos[1] += b.vel[1];
-
   // b.pos[0] will eventually be changed to add to score rather than
 
-  // collides right wall
-  if (b.pos[0] >= W - 2) {
+  //collides right wall
+  //hits right wall and also doesnt hit the paddle
+  if ((b.pos[0] >= W - 2)) {
     b.pos[0] = (W/2) -1;
     b.pos[1] = H/2;
     b.vel[0] = b.vel[1] = 0;
     //press enter then yeet the ball
   }
   //collides left wall
-  if (b.pos[0] < 1) {
+  //if statements are for making sure hits the left wall and doesnt also hit paddle
+  if (b.pos[0] < 1 && ((rightPaddle.pos[1] - 1) != b.pos[1]) &&\
+    ((rightPaddle.pos[1]) != b.pos[1]) && ((rightPaddle.pos[1] + 1) != b.pos[1])) {
     b.pos[0] = (W/2)-1;
     b.pos[1] = H/2;
     b.vel[0] = b.vel[1] = 0;
@@ -96,58 +92,38 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
     b.vel[1] = -b.vel[1];
     b.pos[1] = H - 2;
   }
-////////paddle collission////////
-
+///////////////////////////paddle collission//////////////////////////////
   // collision with right paddle
-
   //top of right paddle
-  if ((b.pos[0] >= rightPaddle.pos[0] - 1) && ((rightPaddle.pos[1] - 1) == b.pos[1])) {
-    b.vel[0] = -b.vel[0];
-    b.pos[0] -= 2;
-    b.vel[0] = 2;
-    b.pos[1] -= 1;
-    b.vel[1] = 1;
-    b.vel[1] = -b.vel[1];
+  if ((b.pos[0] >= rightPaddle.pos[0] - 2) && ((rightPaddle.pos[1] - 1) == b.pos[1])) {
+    b.vel[0] = -2;
+    b.vel[1] = -1;
   }
-
   // middle of right paddle
-  if ((b.pos[0] >= rightPaddle.pos[0] - 1) && (rightPaddle.pos[1] == b.pos[1])) {
-    b.vel[0] = -b.vel[0];
-    b.pos[0] -= 2;
+  if ((b.pos[0] >= rightPaddle.pos[0] - 2) && (rightPaddle.pos[1] == b.pos[1])) {
+    b.vel[0] = -1;
     b.vel[1] = 0;
   }
-
   //bottom of right Paddle
-  if ((b.pos[0] >= rightPaddle.pos[0] - 1) && ((rightPaddle.pos[1] + 1) >= b.pos[1])) {
-    b.vel[0] = -b.vel[0];
-    b.pos[0] -= 2;
-    b.vel[0] = 2;
-    b.pos[1] += 1;
+  if ((b.pos[0] >= rightPaddle.pos[0] - 2) && ((rightPaddle.pos[1] + 1) == b.pos[1])) {
+    b.vel[0] = -2;
     b.vel[1] = 1;
   }
 ////////////////////////////////////////////////////////////////////////////////////////
   //collision with left paddle middle
   // top of left paddle colision
-  if ((b.pos[0] <= leftPaddle.pos[0]) && ((leftPaddle.pos[1] - 1) == b.pos[1])) {
-    b.vel[0] = -b.vel[0];
-    b.pos[0] += 2;
+  if ((b.pos[0] <= leftPaddle.pos[0] + 1) && ((leftPaddle.pos[1] - 1) == b.pos[1])) {
     b.vel[0] = 2;
-    b.pos[1] -= 1;
-    b.vel[1] = 1;
-    b.vel[1] = -b.vel[1];
+    b.vel[1] = -1;
   }
   // middle of left paddle colission
-  if ((b.pos[0] <= leftPaddle.pos[0]) && (leftPaddle.pos[1] == b.pos[1])) {
-    b.vel[0] = -b.vel[0];
-    b.pos[0] += 2;
+  if ((b.pos[0] <= leftPaddle.pos[0] + 1) && (leftPaddle.pos[1] == b.pos[1])) {
+    b.vel[0] = 1;
     b.vel[1] = 0;
   }
   // bottom of left paddle colission
-  if ((b.pos[0] <= leftPaddle.pos[0]) && ((leftPaddle.pos[1] + 1) == b.pos[1])) {
-    b.vel[0] = -b.vel[0];
-    b.pos[0] += 2;
+  if ((b.pos[0] <= leftPaddle.pos[0] + 1) && ((leftPaddle.pos[1] + 1) == b.pos[1])) {
     b.vel[0] = 2;
-    b.pos[1] += 1;
     b.vel[1] = 1;
   }
 }
@@ -195,6 +171,7 @@ void make_gameBoard(char arr[][W]) {
       if (j == W - 1 && i == 1) {
         //left side score board (Left to right on board top to bottom here)
         arr[i][j-50] = '[';
+        // if (!notscore)
         arr[i][j-49] = ' ';
         arr[i][j-48] = ']';
 
@@ -255,7 +232,8 @@ int main(void) {
   Paddle rightPaddle('R'), leftPaddle('L');
   char move;
 
-  b.vel[0] = 1.0;
+  b.vel[0] = -1.0;
+
   do {
     cout << "b.pos[0]: " << b.pos[0] << "   " << "b.vel[0]: " << b.vel[0] << endl;
     cout << "b.pos[1]: " << b.pos[1] << "   " << "b.vel[1]: " << b.vel[1] << endl;
