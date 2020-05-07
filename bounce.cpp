@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <termios.h>
+#include <fcntl.h>
 
 using namespace std;
 
@@ -21,6 +22,7 @@ const int H = 20;
 int rightCount(0), leftCount(0);
 bool rightScore(false), leftScore(false);
 bool quit = false;
+bool enable = false;
 
 class Ball {
 public:
@@ -52,14 +54,14 @@ public:
     }
   }
 };
-
-void rightPaddleMovement(Paddle &rightPaddle, char &move) {
-  move = getchar();
-  if(move == 105) {
-    rightPaddle.pos[0] += 1;
-  }
-
-}
+//
+// void rightPaddleMovement(Paddle &rightPaddle, char &move) {
+//   move = getchar();
+//   if(move == 105) {
+//     rightPaddle.pos[0] += 1;
+//   }
+//
+// }
 
 // All positions are based off of the leftmost part of the ball
 void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
@@ -238,41 +240,80 @@ void make_gameBoard(char arr[][W]) {
   }
 }
 
-// void bitch() {
-//   struct termios oldt, newt;
-//   int ch;
-//   int oldf;
-//
-//   tcgetattr(STDIN_FILENO, &oldt);
-//   newt = oldt;
-//   newt.c_lflag &= ~(ICANON | ECHO);
-//   tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-//   oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
-//   fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
-//
-//   ch = getchar();
-//
-//   tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-//   fcntl(STDIN_FILENO, F_SETFL, oldf);
-//
-//   if(ch != EOF)
-//   {
-//       //ungetc(ch, stdin);
-//       return 1;
-//   }
-//
-//   return 0;
-// }
+void echo ()
+{
+  #ifdef WIN32
+      HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+      DWORD mode;
+      GetConsoleMode(hStdin, &mode);
+
+      if( !enable )
+          mode &= ~ENABLE_ECHO_INPUT;
+      else
+          mode |= ENABLE_ECHO_INPUT;
+
+      SetConsoleMode(hStdin, mode );
+
+  #else
+      struct termios tty;
+      tcgetattr(STDIN_FILENO, &tty);
+      if( !enable )
+          tty.c_lflag &= ~ECHO;
+      else
+          tty.c_lflag |= ECHO;
+
+      (void) tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+  #endif
+}
+void check_keys(int key) {
+  if (key == 27) {
+    enable = true;
+    echo();
+    exit(0);
+  }
+}
+
+int kbhit(void)
+{
+  struct termios oldt, newt;
+  int ch;
+  int oldf;
+
+  tcgetattr(STDIN_FILENO, &oldt);
+
+  newt = oldt;
+  newt.c_lflag &= ~(ICANON | ECHO);
+  tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+  oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+  fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+
+  ch = getchar();
+
+  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+  fcntl(STDIN_FILENO, F_SETFL, oldf);
+
+  if(ch != EOF)
+  {
+    echo();
+    check_keys(ch);
+    // ungetc(ch, stdin); //erases the char that from stdin
+
+    return 1;
+  }
+
+  return 0;
+}
 
 int main(void) {
   char gameBoard[H][W];
   Ball b;
   Paddle rightPaddle('R'), leftPaddle('L');
   char move;
+  b.vel[0] = -1.0; // initial x velocity for start of game
 
-  b.vel[0] = -1.0;
-
-  do {
+  while (!quit || !kbhit()){
+    while (!kbhit()){}
+    // move = getchar();
     cout << "b.pos[0]: " << b.pos[0] << "   " << "b.vel[0]: " << b.vel[0] << endl;
     cout << "b.pos[1]: " << b.pos[1] << "   " << "b.vel[1]: " << b.vel[1] << endl;
     make_gameBoard(gameBoard);
@@ -294,7 +335,8 @@ int main(void) {
     show_arr(gameBoard,H,W);
     usleep(100000);
 
-  } while (!quit);
+  }
+  // while (!quit || !kbhit())
   // } while (!quit || !bitch());
 
   cout << "Game Over." << endl;
