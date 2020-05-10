@@ -7,8 +7,10 @@
 //TODO LIST
 // [x] fixed crazy collision maddness
 // [x] Impelment score system
-// [] complete kbhit with keyboard inputs
+// [x] complete kbhit with keyboard inputs
+// [] stop from getting yeeted off screen
 // [] start converting to online gameplay
+
 #include <iostream>
 #include <unistd.h>
 #include <stdio.h>
@@ -17,12 +19,11 @@
 
 using namespace std;
 
-const int W = 80;
-const int H = 20;
-int rightCount(0), leftCount(0);
-bool rightScore(false), leftScore(false);
-bool quit = false;
-bool enable = false;
+const int W = 80; //gameboard width
+const int H = 20; //gamebard height
+int rightCount(0), leftCount(0); //varibales for score
+bool rightScore(false), leftScore(false); //varibales for score
+bool quit = false; //exit status varibale
 
 class Ball {
 public:
@@ -55,23 +56,23 @@ public:
   }
 };
 
-
 // All positions are based off of the leftmost part of the ball
 void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
   b.pos[0] += b.vel[0];
   b.pos[1] += b.vel[1];
-  // b.pos[0] will eventually be changed to add to score rather than
 
   //collides right wall
   //hits right wall and also doesnt hit the paddle
   if ((b.pos[0] >= W - 2)) {
-    b.pos[0] = (W/2) -1;
+    b.pos[0] = (W/2) - 1;
     b.pos[1] = H/2;
+    //setting the respawn velocity to only x
+    b.vel[0] = 2;
+    b.vel[1] = 0; //change this to test score system
     // b.vel[0] = b.vel[1] = 0; //change this to test score system
     // score implementation
     leftScore = true;
     leftCount++;
-
     //press enter then yeet the ball
   }
   //collides left wall
@@ -79,6 +80,9 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
   if (b.pos[0] < 1) {
     b.pos[0] = (W/2)-1;
     b.pos[1] = H/2;
+    //setting the respawn velocity to only x
+    b.vel[0] = 2;
+    b.vel[1] = 0; //change this to test score system
     // b.vel[0] = b.vel[1] = 0; //change this to test score system
     // score implementation
     rightScore = true;
@@ -103,7 +107,7 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
   }
   // middle of right paddle
   if ((b.pos[0] >= rightPaddle.pos[0] - 2) && (rightPaddle.pos[1] == b.pos[1])) {
-    b.vel[0] = -1;
+    b.vel[0] = -2;
     b.vel[1] = 0;
   }
   //bottom of right Paddle
@@ -120,7 +124,7 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
   }
   // middle of left paddle colission
   if ((b.pos[0] <= leftPaddle.pos[0] + 1) && (leftPaddle.pos[1] == b.pos[1])) {
-    b.vel[0] = 1;
+    b.vel[0] = 2;
     b.vel[1] = 0;
   }
   // bottom of left paddle colission
@@ -183,8 +187,20 @@ void make_gameBoard(char arr[][W]) {
         arr[i][j-44] = '[';
         arr[i][j-43] = ' ';
         arr[i][j-42] = ']';
+        //right side score scor|eb|oard
+        arr[i][j-37] = '[';
+        arr[i][j-36] = ' ';
+        arr[i][j-35] = ']';
 
-        //score system logic
+        arr[i][j-34] = '[';
+        arr[i][j-33] = ' ';
+        arr[i][j-32] = ']';
+
+        arr[i][j-31] = '[';
+        arr[i][j-30] = ' ';
+        arr[i][j-29] = ']';
+
+        //score system logic left side
         if (leftCount == 1){
           arr[i][j-49] = 'x';
           leftScore = false;
@@ -199,21 +215,7 @@ void make_gameBoard(char arr[][W]) {
           leftScore = false;
           quit = true;
         }
-
-        //right side score scor|eb|oard
-        arr[i][j-37] = '[';
-        arr[i][j-36] = ' ';
-        arr[i][j-35] = ']';
-
-        arr[i][j-34] = '[';
-        arr[i][j-33] = ' ';
-        arr[i][j-32] = ']';
-
-        arr[i][j-31] = '[';
-        arr[i][j-30] = ' ';
-        arr[i][j-29] = ']';
-
-        //score system logic
+        //score system logic right side
         if (rightCount == 1) {
           arr[i][j-30] = 'x';
           rightScore = false;
@@ -242,9 +244,10 @@ int check_keys(char key) {
 		cout << " left going up" << endl;
     //function move paddle
   }
-
 	return 0;
 }
+
+//will be used later when we do online
 // int kbhit(void)
 // {
 //   struct termios oldt, newt;
@@ -305,17 +308,25 @@ char getcharAlt() {
 
 void rightPaddleMovement(Paddle &rightPaddle, char move) {
   if(move == 'p') {
-    rightPaddle.pos[1]--;
+    if (rightPaddle.pos[1] >= 3) {
+      rightPaddle.pos[1]--;
+    }
   } else if(move == 'l') {
-    rightPaddle.pos[1]++;
+    if(rightPaddle.pos[1] <= (H - 4)) {
+      rightPaddle.pos[1]++;
+    }
   }
 }
 
 void leftPaddleMovement(Paddle &leftPaddle, char move) {
   if(move == 'w') {
-    leftPaddle.pos[1]--;
+    if (leftPaddle.pos[1] >= 3) {
+      leftPaddle.pos[1]--;
+    }
   } else if(move == 's') {
-    leftPaddle.pos[1]++;
+    if (leftPaddle.pos[1] <= (H - 4)) {
+      leftPaddle.pos[1]++;
+    }
   }
 }
 
@@ -329,9 +340,9 @@ int main(void) {
   // start screen
   // call another function for kbhit
   // when hit enter exit out of kbhit and
+  
   SetKeyboardNonBlock(&term_settings);
-
-  b.vel[0] = -1.0; // initial x velocity for start of game
+  b.vel[0] = 0.0; // initial x velocity for start of game
 
   while (!check_keys(move)) {
     // while (!kbhit()){}
@@ -361,6 +372,8 @@ int main(void) {
     collision(W, b, rightPaddle, leftPaddle);
     show_arr(gameBoard,H,W);
     usleep(100000);
+
+    if (quit == true) {break;}//logic for game winning "quit" is altered in collission near bottom
   }
   // while (!quit || !kbhit())
   // } while (!quit || !bitch());
@@ -375,7 +388,6 @@ int main(void) {
   } else {
     cout << "It's a Draw!" << endl;
   }
-
   RestoreKeyboardBlocking(&term_settings);
 
   return 0;
