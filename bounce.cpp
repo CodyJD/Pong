@@ -50,18 +50,11 @@ public:
     if (side == 'R') {
       marker[0] = '[';
       pos[0]= W - 2;
-      pos[1]= H/2+1;
+      pos[1]= H/2;
     }
   }
 };
-//
-// void rightPaddleMovement(Paddle &rightPaddle, char &move) {
-//   move = getchar();
-//   if(move == 105) {
-//     rightPaddle.pos[0] += 1;
-//   }
-//
-// }
+
 
 // All positions are based off of the leftmost part of the ball
 void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
@@ -240,88 +233,122 @@ void make_gameBoard(char arr[][W]) {
   }
 }
 
-void echo ()
-{
-  #ifdef WIN32
-      HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
-      DWORD mode;
-      GetConsoleMode(hStdin, &mode);
+int check_keys(char key) {
+	if (key == 27){
+		// std::cout << " bye bye" << std::endl;
+		return 1;
+	}
+	if (key == 'w') {
+		cout << " left going up" << endl;
+    //function move paddle
+  }
 
-      if( !enable )
-          mode &= ~ENABLE_ECHO_INPUT;
-      else
-          mode |= ENABLE_ECHO_INPUT;
-
-      SetConsoleMode(hStdin, mode );
-
-  #else
-      struct termios tty;
-      tcgetattr(STDIN_FILENO, &tty);
-      if( !enable )
-          tty.c_lflag &= ~ECHO;
-      else
-          tty.c_lflag |= ECHO;
-
-      (void) tcsetattr(STDIN_FILENO, TCSANOW, &tty);
-  #endif
+	return 0;
 }
-void check_keys(int key) {
-  if (key == 27) {
-    enable = true;
-    echo();
-    exit(0);
+// int kbhit(void)
+// {
+//   struct termios oldt, newt;
+//   int ch;
+//   int oldf;
+//
+//   tcgetattr(STDIN_FILENO, &oldt);
+//
+//   newt = oldt;
+//   newt.c_lflag &= ~(ICANON | ECHO);
+//   tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+//   oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+//   fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+//
+//   ch = getchar();
+//
+//   tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+//   fcntl(STDIN_FILENO, F_SETFL, oldf);
+//
+//   if(ch != EOF)
+//   {
+//     echo();
+//     check_keys(ch);
+//     ungetc(ch, stdin); //erases the char that from stdin
+//
+//     return 1;
+//   }
+//
+//   return 0;
+// }
+
+void RestoreKeyboardBlocking(struct termios *initial_settings)
+{
+	tcsetattr(0, TCSANOW, initial_settings);
+}
+
+void SetKeyboardNonBlock(struct termios *initial_settings)
+{
+    struct termios new_settings;
+    tcgetattr(0,initial_settings);
+
+    new_settings = *initial_settings;
+    new_settings.c_lflag &= ~ICANON;
+    new_settings.c_lflag &= ~ECHO;
+    new_settings.c_lflag &= ~ISIG;
+    new_settings.c_cc[VMIN] = 0;
+    new_settings.c_cc[VTIME] = 0;
+
+    tcsetattr(0, TCSANOW, &new_settings);
+}
+
+char getcharAlt() {
+    char buff[1];
+    int l = read(STDIN_FILENO,buff,1);
+    if (l>0) return buff[0];
+    return ( EOF);
+}
+
+void rightPaddleMovement(Paddle &rightPaddle, char move) {
+  if(move == 'p') {
+    rightPaddle.pos[1]--;
+  } else if(move == 'l') {
+    rightPaddle.pos[1]++;
   }
 }
 
-int kbhit(void)
-{
-  struct termios oldt, newt;
-  int ch;
-  int oldf;
-
-  tcgetattr(STDIN_FILENO, &oldt);
-
-  newt = oldt;
-  newt.c_lflag &= ~(ICANON | ECHO);
-  tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-  oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
-  fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
-
-  ch = getchar();
-
-  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-  fcntl(STDIN_FILENO, F_SETFL, oldf);
-
-  if(ch != EOF)
-  {
-    echo();
-    check_keys(ch);
-    ungetc(ch, stdin); //erases the char that from stdin
-
-    return 1;
+void leftPaddleMovement(Paddle &leftPaddle, char move) {
+  if(move == 'w') {
+    leftPaddle.pos[1]--;
+  } else if(move == 's') {
+    leftPaddle.pos[1]++;
   }
-
-  return 0;
 }
 
 int main(void) {
   char gameBoard[H][W];
   Ball b;
   Paddle rightPaddle('R'), leftPaddle('L');
-  char move;
+  char move = 0;
+  struct termios term_settings;
+
+  // start screen
+  // call another function for kbhit
+  // when hit enter exit out of kbhit and
+  SetKeyboardNonBlock(&term_settings);
+
   b.vel[0] = -1.0; // initial x velocity for start of game
 
-  while (!quit || !kbhit()){
-    while (!kbhit()){}
-    // move = getchar();
+  while (!check_keys(move)) {
+    // while (!kbhit()){}
     cout << "b.pos[0]: " << b.pos[0] << "   " << "b.vel[0]: " << b.vel[0] << endl;
     cout << "b.pos[1]: " << b.pos[1] << "   " << "b.vel[1]: " << b.vel[1] << endl;
     make_gameBoard(gameBoard);
     //creating ball and drawing in position
     gameBoard[(int)b.pos[1]][(int)b.pos[0]] = '[';
     gameBoard[(int)b.pos[1]][(int)b.pos[0]+1] = ']';
-
-    //rightPaddleMovement(rightPaddle, move);
+    //movement controlls for left and right paddle
+    move = getcharAlt();
+    if (move == 'p' || move == 'l') {
+      rightPaddleMovement(rightPaddle, move);
+    }
+    if (move == 'w' || move == 's'){
+      leftPaddleMovement(leftPaddle, move);
+    }
     //crating paddle and drawing in position
     gameBoard[(int)rightPaddle.pos[1]][(int)rightPaddle.pos[0]] = rightPaddle.marker[0];
     gameBoard[(int)rightPaddle.pos[1]+1][(int)rightPaddle.pos[0]] = rightPaddle.marker[0];
@@ -334,7 +361,6 @@ int main(void) {
     collision(W, b, rightPaddle, leftPaddle);
     show_arr(gameBoard,H,W);
     usleep(100000);
-
   }
   // while (!quit || !kbhit())
   // } while (!quit || !bitch());
@@ -344,9 +370,13 @@ int main(void) {
   // player name
   if (leftCount == 3) {
     cout << "Left Player Wins!" << endl;
-  }
-  else
+  } else if (rightCount == 3) {
     cout << "Right Player Wins!" << endl;
+  } else {
+    cout << "It's a Draw!" << endl;
+  }
+
+  RestoreKeyboardBlocking(&term_settings);
 
   return 0;
 }
