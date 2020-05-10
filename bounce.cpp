@@ -296,7 +296,7 @@ int kbhit(void)
   {
     echo();
     check_keys(ch);
-    // ungetc(ch, stdin); //erases the char that from stdin
+    ungetc(ch, stdin); //erases the char that from stdin
 
     return 1;
   }
