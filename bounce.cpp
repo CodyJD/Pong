@@ -70,6 +70,10 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
     b.vel[0] = 2;
     b.vel[1] = 0; //change this to test score system
     // b.vel[0] = b.vel[1] = 0; //change this to test score system
+
+    //recentering the paddles after score point
+    rightPaddle.pos[1] = H / 2;
+    leftPaddle.pos[1] = H / 2;
     // score implementation
     leftScore = true;
     leftCount++;
@@ -84,6 +88,11 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
     b.vel[0] = 2;
     b.vel[1] = 0; //change this to test score system
     // b.vel[0] = b.vel[1] = 0; //change this to test score system
+
+    //recenter paddles after score point
+    rightPaddle.pos[1] = H / 2;
+    leftPaddle.pos[1] = H / 2;
+    
     // score implementation
     rightScore = true;
     rightCount++;
@@ -104,6 +113,7 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
   if ((b.pos[0] >= rightPaddle.pos[0] - 2) && ((rightPaddle.pos[1] - 1) == b.pos[1])) {
     b.vel[0] = -2;
     b.vel[1] = -1;
+
   }
   // middle of right paddle
   if ((b.pos[0] >= rightPaddle.pos[0] - 2) && (rightPaddle.pos[1] == b.pos[1])) {
@@ -340,9 +350,9 @@ int main(void) {
   // start screen
   // call another function for kbhit
   // when hit enter exit out of kbhit and
-  
+
   SetKeyboardNonBlock(&term_settings);
-  b.vel[0] = 0.0; // initial x velocity for start of game
+  b.vel[0] = -2.0; // initial x velocity for start of game
 
   while (!check_keys(move)) {
     // while (!kbhit()){}
