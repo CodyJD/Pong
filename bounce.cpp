@@ -25,6 +25,36 @@ int rightCount(0), leftCount(0); //varibales for score
 bool rightScore(false), leftScore(false); //varibales for score
 bool quit = false; //exit status varibale
 
+//fucntion from titles for main menu drawing
+void drawMenu() {
+  cout << "            " << "     ___         ___           ___           ___     " << endl;
+  cout << "            " << "    /\\  \\       /\\  \\         /\\  \\         /\\__\\    " << endl;
+  cout << "            " << "   /::\\  \\     /::\\  \\        \\:\\  \\       /:/ _/_   " << endl;
+  cout << "            " << "  /:/\\:\\__\\   /:/\\:\\  \\        \\:\\  \\     /:/ /\\  \\  " << endl;
+  cout << "            " << " /:/ /:/  /  /:/  \\:\\  \\   _____\\:\\  \\   /:/ /::\\  \\ " << endl;
+  cout << "            " << "/:/_/:/  /  /:/__/ \\:\\__\\ /::::::::\\__\\ /:/__\\/\\:\\__\\" << endl;
+  cout << "            " << "\\:\\/:/  /   \\:\\  \\ /:/  / \\:\\~~\\~~\\/__/ \\:\\  \\ /:/  /" << endl;
+  cout << "            " << " \\::/__/     \\:\\  /:/  /   \\:\\  \\        \\:\\  /:/  / " << endl;
+  cout << "            " << "  \\:\\  \\      \\:\\/:/  /     \\:\\  \\        \\:\\/:/  /  " << endl;
+  cout << "            " << "   \\:\\__\\      \\::/  /       \\:\\__\\        \\::/  /   " << endl;
+  cout << "            " << "    \\/__/       \\/__/         \\/__/         \\/__/    " << endl;
+
+
+  cout << "                         " << "     ___           ___     " << endl;
+  cout << "                         " << "    /\\  \\         /\\  \\ " << endl;
+  cout << "                         " << "   /::\\  \\        \\:\\  \\ " << endl;
+  cout << "                         " << "  /:/\\:\\  \\        \\:\\  \\ " << endl;
+  cout << "                         " << " /:/  \\:\\  \\   _____\\:\\  \\ " << endl;
+  cout << "                         " << "/:/__/ \\:\\__\\ /::::::::\\__\\ " << endl;
+  cout << "                         " << "\\:\\  \\ /:/  / \\:\\~~\\~~\\/__/ " << endl;
+  cout << "                         " << " \\:\\  /:/  /   \\:\\  \\ " << endl;
+  cout << "                         " << "  \\:\\/:/  /     \\:\\  \\ " << endl;
+  cout << "                         " << "   \\::/  /       \\:\\__\\ " << endl;
+  cout << "                         " << "    \\/__/         \\/__/ " << endl;
+  cout << "\n";
+  cout << "                        " << "\033[1;31mPress Enter To Play Game\033[0m\n\n";
+  }
+
 class Ball {
 public:
   double pos[2];
@@ -92,7 +122,7 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
     //recenter paddles after score point
     rightPaddle.pos[1] = H / 2;
     leftPaddle.pos[1] = H / 2;
-    
+
     // score implementation
     rightScore = true;
     rightCount++;
@@ -345,15 +375,23 @@ int main(void) {
   Ball b;
   Paddle rightPaddle('R'), leftPaddle('L');
   char move = 0;
+  char enter = 0;
   struct termios term_settings;
-
   // start screen
   // call another function for kbhit
   // when hit enter exit out of kbhit and
-
   SetKeyboardNonBlock(&term_settings);
   b.vel[0] = -2.0; // initial x velocity for start of game
 
+///temporary for hit enter to play////
+  while (!check_keys(enter)) {
+    drawMenu();
+    enter = getcharAlt();
+    //this is 13 cuz ascii 13 is CR = carriage return = \r
+    if (enter == 13) {break;}
+    usleep(100000);
+  }
+  //main gameplay loop
   while (!check_keys(move)) {
     // while (!kbhit()){}
     cout << "b.pos[0]: " << b.pos[0] << "   " << "b.vel[0]: " << b.vel[0] << endl;

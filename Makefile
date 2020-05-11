@@ -3,7 +3,7 @@ all: bounce titles
 # nonblock
 # kbhit
 
-bounce: bounce.cpp
+bounce: bounce.cpp titles.cpp
 	g++ bounce.cpp -Wall -o pong
 
 titles: titles.cpp
