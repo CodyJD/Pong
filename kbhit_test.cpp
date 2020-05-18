@@ -61,7 +61,6 @@ int kbhit()
   int oldf;
 
   tcgetattr(STDIN_FILENO, &oldt);
-  // tcgetattr(STDIN_FILENO, &tty);
 
   newt = oldt;
   newt.c_lflag &= ~(ICANON | ECHO);
@@ -69,15 +68,9 @@ int kbhit()
   oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
   fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
 
-  // if( !enable )
-  //     tty.c_lflag &= ~ECHO;
-  // else
-  //     tty.c_lflag |= ECHO;
-
   ch = getchar();
 
   tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-  // (void) tcsetattr(STDIN_FILENO, TCSANOW, &tty);
   fcntl(STDIN_FILENO, F_SETFL, oldf);
 
   if(ch != EOF)

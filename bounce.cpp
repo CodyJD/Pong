@@ -8,7 +8,7 @@
 // [x] fixed crazy collision maddness
 // [x] Impelment score system
 // [x] complete kbhit with keyboard inputs
-// [] stop from getting yeeted off screen
+// [x] stop from getting yeeted off screen
 // [] start converting to online gameplay
 
 #include <iostream>
@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <termios.h>
 #include <fcntl.h>
+#include "titles.h"
 
 using namespace std;
 
@@ -24,36 +25,6 @@ const int H = 20; //gamebard height
 int rightCount(0), leftCount(0); //varibales for score
 bool rightScore(false), leftScore(false); //varibales for score
 bool quit = false; //exit status varibale
-
-//fucntion from titles for main menu drawing
-void drawMenu() {
-  cout << "            " << "     ___         ___           ___           ___     " << endl;
-  cout << "            " << "    /\\  \\       /\\  \\         /\\  \\         /\\__\\    " << endl;
-  cout << "            " << "   /::\\  \\     /::\\  \\        \\:\\  \\       /:/ _/_   " << endl;
-  cout << "            " << "  /:/\\:\\__\\   /:/\\:\\  \\        \\:\\  \\     /:/ /\\  \\  " << endl;
-  cout << "            " << " /:/ /:/  /  /:/  \\:\\  \\   _____\\:\\  \\   /:/ /::\\  \\ " << endl;
-  cout << "            " << "/:/_/:/  /  /:/__/ \\:\\__\\ /::::::::\\__\\ /:/__\\/\\:\\__\\" << endl;
-  cout << "            " << "\\:\\/:/  /   \\:\\  \\ /:/  / \\:\\~~\\~~\\/__/ \\:\\  \\ /:/  /" << endl;
-  cout << "            " << " \\::/__/     \\:\\  /:/  /   \\:\\  \\        \\:\\  /:/  / " << endl;
-  cout << "            " << "  \\:\\  \\      \\:\\/:/  /     \\:\\  \\        \\:\\/:/  /  " << endl;
-  cout << "            " << "   \\:\\__\\      \\::/  /       \\:\\__\\        \\::/  /   " << endl;
-  cout << "            " << "    \\/__/       \\/__/         \\/__/         \\/__/    " << endl;
-
-
-  cout << "                         " << "     ___           ___     " << endl;
-  cout << "                         " << "    /\\  \\         /\\  \\ " << endl;
-  cout << "                         " << "   /::\\  \\        \\:\\  \\ " << endl;
-  cout << "                         " << "  /:/\\:\\  \\        \\:\\  \\ " << endl;
-  cout << "                         " << " /:/  \\:\\  \\   _____\\:\\  \\ " << endl;
-  cout << "                         " << "/:/__/ \\:\\__\\ /::::::::\\__\\ " << endl;
-  cout << "                         " << "\\:\\  \\ /:/  / \\:\\~~\\~~\\/__/ " << endl;
-  cout << "                         " << " \\:\\  /:/  /   \\:\\  \\ " << endl;
-  cout << "                         " << "  \\:\\/:/  /     \\:\\  \\ " << endl;
-  cout << "                         " << "   \\::/  /       \\:\\__\\ " << endl;
-  cout << "                         " << "    \\/__/         \\/__/ " << endl;
-  cout << "\n";
-  cout << "                        " << "\033[1;31mPress Enter To Play Game\033[0m\n\n";
-  }
 
 class Ball {
 public:
@@ -174,7 +145,8 @@ void collision(int W, Ball &b, Paddle &rightPaddle, Paddle &leftPaddle) {
   }
 }
 
-void show_arr(char arr[][W], int H, int W) {
+void show_arr(char arr[][W], int H, int W)
+{
   for (int i = 0; i < H; i++) {
     for (int j = 0; j < W; j++) {
       cout << arr[i][j];
@@ -184,7 +156,8 @@ void show_arr(char arr[][W], int H, int W) {
   cout << endl;
 }
 
-void make_gameBoard(char arr[][W]) {
+void make_gameBoard(char arr[][W])
+{
   for (int i = 0; i < H; i++) {
     for (int j = 0; j < W; j++) {
       //fill character for board
@@ -275,49 +248,42 @@ void make_gameBoard(char arr[][W]) {
   }
 }
 
-int check_keys(char key) {
+int check_keys(char key)
+{
 	if (key == 27){
 		// std::cout << " bye bye" << std::endl;
 		return 1;
 	}
-	if (key == 'w') {
-		cout << " left going up" << endl;
-    //function move paddle
+  if (key == 10) {
+    printf("You've pressed enter!\n");
   }
 	return 0;
 }
 
-//will be used later when we do online
-// int kbhit(void)
-// {
-//   struct termios oldt, newt;
-//   int ch;
-//   int oldf;
-//
-//   tcgetattr(STDIN_FILENO, &oldt);
-//
-//   newt = oldt;
-//   newt.c_lflag &= ~(ICANON | ECHO);
-//   tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-//   oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
-//   fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
-//
-//   ch = getchar();
-//
-//   tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-//   fcntl(STDIN_FILENO, F_SETFL, oldf);
-//
-//   if(ch != EOF)
-//   {
-//     echo();
-//     check_keys(ch);
-//     ungetc(ch, stdin); //erases the char that from stdin
-//
-//     return 1;
-//   }
-//
-//   return 0;
-// }
+int menu(char key)
+{
+  // enter character
+  if (key == 10) {
+    return 1;
+  }
+  if (key == 'h') {
+    howToPlay();
+  }
+  if (key == 'b') {
+    // back to start screen
+    startScreen();
+  }
+  if (key == 'c') {
+    // credit screen
+    credits();
+  }
+  if (key == 'e') {
+    endScreen(false, false);
+  }
+
+  return 0;
+}
+
 
 void RestoreKeyboardBlocking(struct termios *initial_settings)
 {
@@ -339,14 +305,16 @@ void SetKeyboardNonBlock(struct termios *initial_settings)
     tcsetattr(0, TCSANOW, &new_settings);
 }
 
-char getcharAlt() {
+char getcharAlt()
+{
     char buff[1];
     int l = read(STDIN_FILENO,buff,1);
     if (l>0) return buff[0];
     return ( EOF);
 }
 
-void rightPaddleMovement(Paddle &rightPaddle, char move) {
+void rightPaddleMovement(Paddle &rightPaddle, char move)
+{
   if(move == 'p') {
     if (rightPaddle.pos[1] >= 3) {
       rightPaddle.pos[1]--;
@@ -358,7 +326,8 @@ void rightPaddleMovement(Paddle &rightPaddle, char move) {
   }
 }
 
-void leftPaddleMovement(Paddle &leftPaddle, char move) {
+void leftPaddleMovement(Paddle &leftPaddle, char move)
+{
   if(move == 'w') {
     if (leftPaddle.pos[1] >= 3) {
       leftPaddle.pos[1]--;
@@ -370,36 +339,39 @@ void leftPaddleMovement(Paddle &leftPaddle, char move) {
   }
 }
 
-int main(void) {
+int main(void)
+{
   char gameBoard[H][W];
   Ball b;
   Paddle rightPaddle('R'), leftPaddle('L');
   char move = 0;
-  char enter = 0;
+  char key = 0;
   struct termios term_settings;
-  // start screen
-  // call another function for kbhit
-  // when hit enter exit out of kbhit and
-  SetKeyboardNonBlock(&term_settings);
   b.vel[0] = -2.0; // initial x velocity for start of game
 
-///temporary for hit enter to play////
-  while (!check_keys(enter)) {
-    drawMenu();
-    enter = getcharAlt();
-    //this is 13 cuz ascii 13 is CR = carriage return = \r
-    if (enter == 13) {break;}
-    usleep(100000);
+  SetKeyboardNonBlock(&term_settings);
+
+  // call start screen from titles.cpp
+  startScreen();
+  while (!menu(key)) {
+    key = getcharAlt();
+
+    // escape character if player wants to leave completely
+    if (key == 27) {
+      RestoreKeyboardBlocking(&term_settings);
+      return 0;
+    }
   }
+
   //main gameplay loop
   while (!check_keys(move)) {
-    // while (!kbhit()){}
-    cout << "b.pos[0]: " << b.pos[0] << "   " << "b.vel[0]: " << b.vel[0] << endl;
-    cout << "b.pos[1]: " << b.pos[1] << "   " << "b.vel[1]: " << b.vel[1] << endl;
+    // cout << "b.pos[0]: " << b.pos[0] << "   " << "b.vel[0]: " << b.vel[0] << endl;
+    // cout << "b.pos[1]: " << b.pos[1] << "   " << "b.vel[1]: " << b.vel[1] << endl;
     make_gameBoard(gameBoard);
     //creating ball and drawing in position
     gameBoard[(int)b.pos[1]][(int)b.pos[0]] = '[';
     gameBoard[(int)b.pos[1]][(int)b.pos[0]+1] = ']';
+
     //movement controlls for left and right paddle
     move = getcharAlt();
     if (move == 'p' || move == 'l') {
@@ -408,6 +380,7 @@ int main(void) {
     if (move == 'w' || move == 's'){
       leftPaddleMovement(leftPaddle, move);
     }
+
     //crating paddle and drawing in position
     gameBoard[(int)rightPaddle.pos[1]][(int)rightPaddle.pos[0]] = rightPaddle.marker[0];
     gameBoard[(int)rightPaddle.pos[1]+1][(int)rightPaddle.pos[0]] = rightPaddle.marker[0];
@@ -419,23 +392,20 @@ int main(void) {
 
     collision(W, b, rightPaddle, leftPaddle);
     show_arr(gameBoard,H,W);
+    cout << "\n\n";
     usleep(100000);
 
     if (quit == true) {break;}//logic for game winning "quit" is altered in collission near bottom
   }
-  // while (!quit || !kbhit())
-  // } while (!quit || !bitch());
 
-  cout << "Game Over." << endl;
-  // in multiplayer we can put the names of the inputted
-  // player name
   if (leftCount == 3) {
-    cout << "Left Player Wins!" << endl;
+    endScreen(true, false);
   } else if (rightCount == 3) {
-    cout << "Right Player Wins!" << endl;
+    endScreen(false, true);
   } else {
-    cout << "It's a Draw!" << endl;
+    endScreen(false, false);
   }
+  
   RestoreKeyboardBlocking(&term_settings);
 
   return 0;

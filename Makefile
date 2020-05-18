@@ -1,22 +1,10 @@
-all: bounce titles
-# invisible
-# nonblock
-# kbhit
+all: pong
 
-bounce: bounce.cpp titles.cpp
-	g++ bounce.cpp -Wall -o pong
+SOURCE = bounce.cpp titles.cpp
+HEADER = titles.h
 
-titles: titles.cpp
-	g++ titles.cpp -Wall -o titles
-
-# kbhit: kbhit_test.cpp
-# 	g++ kbhit_test.cpp -Wall -o kb
-
-# invisible: invisible_test.cpp
-# 	g++ invisible_test.cpp -Wall -o invi
-
-# nonblock: nonblock.cpp
-# 	g++ nonblock.cpp -Wall -o nb
+pong: $(SOURCE) $(HEADER)
+	g++ $(SOURCE) -Wall -o pong
 
 clean:
 	rm -f *.o
